@@ -4,7 +4,6 @@ Search top r/wallstreetbets posts for specified tickers (or really any keyword) 
 
 ## Usage
 ```
-./wsbscpr.py [-h] -n NUMPOSTS -t TICKERS [TICKERS ...]
 ./wsbscpr.py [-h] -n NUMPOSTS [-d DEPTH] -t TICKERS [TICKERS ...]
 
 -n NUMPOSTS Number of hot posts to search
