@@ -13,7 +13,7 @@ Search top r/wallstreetbets posts for specified tickers (or really any keyword) 
 ```
 For example:
 ```
-./wsbscrper -n 10 -d 50 -t PLTR TSLA GOOG
+./wsbscper -n 10 -d 50 -t PLTR TSLA GOOG
 ```
 
 ## Installation
