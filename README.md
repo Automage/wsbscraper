@@ -1,6 +1,6 @@
 # WSBScraper
 
-Search top r/wallstreetbets posts for specified tickers (or really any keyword) to keep up with the ~~retar...~~  discussion!
+Search top r/wallstreetbets posts for specified tickers (or really any keyword) to keep up with the ~~reta..~~  discussion!
 
 ## Usage
 ```
