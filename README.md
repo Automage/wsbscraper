@@ -5,14 +5,16 @@ Search top r/wallstreetbets posts for specified tickers (or really any keyword) 
 ## Usage
 ```
 ./wsbscpr.py [-h] -n NUMPOSTS -t TICKERS [TICKERS ...]
+./wsbscpr.py [-h] -n NUMPOSTS [-d DEPTH] -t TICKERS [TICKERS ...]
 
 -n NUMPOSTS Number of hot posts to search
+-d DEPTH    Number of comments to search per post
 -t TICKERS  List of tickers to search comments for
 -h HELP     Help message
 ```
 For example:
 ```
-./wsbscrper -n 10 -t PLTR TSLA GOOG
+./wsbscrper -n 10 -d 50 -t PLTR TSLA GOOG
 ```
 
 ## Installation
