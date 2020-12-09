@@ -3,7 +3,7 @@ import os
 import argparse
 import json
 import praw
-from colorama import init, Fore
+from colorama import init, Fore, Style
 from dotenv import load_dotenv
 
 # Doom font
@@ -33,14 +33,17 @@ def setup_env():
 
 
 def setup():
+    # Init colorama to reset after every print
+    init(autoreset=True) 
+
     # Env Setup
-    init(autoreset=True) # Init colorama
     SECRET, ID, USER_AGENT = setup_env()
-    parser = setup_args()
     # print("SECRET=%s ID=%s USER_AGENT=%s" % (SECRET, ID, USER_AGENT))
 
-    # PRAW Setup
+    # Setup parser and arguments
+    parser = setup_args()
 
+    # PRAW Setup
     reddit = praw.Reddit(client_id=ID, client_secret=SECRET, user_agent=USER_AGENT)
 
     return parser, reddit
@@ -54,9 +57,9 @@ class WSBScraper:
 
 
     def ticker_search(self, comment):
-        print('Tickers: ', self.tickers)
         print(comment.body)
-        print('[', comment.permalink, ']')
+        print(Fore.BLUE + str(self.tickers))
+        print(f'[{Fore.YELLOW}{comment.permalink}{Style.RESET_ALL}]')
         print()
 
 
@@ -69,7 +72,7 @@ class WSBScraper:
 
         for post in posts:
             print(post.title)
-            print('[', post.url, ']')
+            print(f'[{Fore.YELLOW}{post.url}{Style.RESET_ALL}]')
             print()
             submission = self.reddit.submission(id=post.id)
             submission.comment_sort = 'top'
@@ -79,7 +82,7 @@ class WSBScraper:
                 self.ticker_search(comment)
                 # Limit search to top 30 comments per post
                 i = i + 1
-                if i > 30:
+                if i > 3:
                     break
 
 
@@ -96,9 +99,8 @@ def main():
     tickers = options.tickers
 
     # Print options 
-    print()
-    print("Tickers:\t", tickers)
-    print("#Posts: \t", num_posts)
+    print(Fore.MAGENTA + "Tickers:\t", tickers)
+    print(Fore.MAGENTA + "#Posts: \t", num_posts)
     print()
 
     # Begin scraping
