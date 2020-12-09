@@ -3,8 +3,9 @@ import os
 import argparse
 import json
 import praw
-from colorama import init, Fore, Style
+from colorama import init
 from dotenv import load_dotenv
+from util import print_link, print_tickers, print_intro, print_options
 
 # Doom font
 INTRO_MSG = '''
@@ -58,8 +59,8 @@ class WSBScraper:
 
     def ticker_search(self, comment):
         print(comment.body)
-        print(Fore.BLUE + str(self.tickers))
-        print(f'[{Fore.YELLOW}{comment.permalink}{Style.RESET_ALL}]')
+        print_tickers(self.tickers)
+        print_link(comment.permalink)
         print()
 
 
@@ -72,7 +73,7 @@ class WSBScraper:
 
         for post in posts:
             print(post.title)
-            print(f'[{Fore.YELLOW}{post.url}{Style.RESET_ALL}]')
+            print_link(post.url)
             print()
             submission = self.reddit.submission(id=post.id)
             submission.comment_sort = 'top'
@@ -88,7 +89,7 @@ class WSBScraper:
 
 def main():
     # Obnoxious title message
-    print(Fore.RED + INTRO_MSG)
+    print_intro(INTRO_MSG)
 
     # Read .env, setup PRAW, get arguments
     parser, reddit = setup()
@@ -99,9 +100,7 @@ def main():
     tickers = options.tickers
 
     # Print options 
-    print(Fore.MAGENTA + "Tickers:\t", tickers)
-    print(Fore.MAGENTA + "#Posts: \t", num_posts)
-    print()
+    print_options(tickers, num_posts)
 
     # Begin scraping
     scraper = WSBScraper(reddit, tickers, num_posts)
