@@ -32,59 +32,78 @@ def setup_env():
     return os.getenv('SECRET'), os.getenv('ID'), os.getenv('USER_AGENT')
 
 
-def ticker_search(comment, tickers):
-    print('Tickers: ', tickers)
-    print(comment.body)
-    print('[', comment.permalink, ']')
-    print()
-
-def main():
-    print(Fore.RED + INTRO_MSG)
-
+def setup():
     # Env Setup
     init(autoreset=True) # Init colorama
     SECRET, ID, USER_AGENT = setup_env()
     parser = setup_args()
     # print("SECRET=%s ID=%s USER_AGENT=%s" % (SECRET, ID, USER_AGENT))
-    # print()
 
     # PRAW Setup
 
     reddit = praw.Reddit(client_id=ID, client_secret=SECRET, user_agent=USER_AGENT)
 
-    # Parse arguments
+    return parser, reddit
 
+
+class WSBScraper:
+    def __init__(self, reddit, tickers, num_posts):
+        self.reddit = reddit
+        self.tickers = tickers
+        self.num_posts = num_posts
+
+
+    def ticker_search(self, comment):
+        print('Tickers: ', self.tickers)
+        print(comment.body)
+        print('[', comment.permalink, ']')
+        print()
+
+
+    def scrape(self):
+        posts = self.reddit.subreddit('wallstreetbets').hot(limit=(self.num_posts + 1))
+        posts = [post for post in posts]
+
+        # Skip daily discussion
+        posts = posts[1:]
+
+        for post in posts:
+            print(post.title)
+            print('[', post.url, ']')
+            print()
+            submission = self.reddit.submission(id=post.id)
+            submission.comment_sort = 'top'
+            submission.comments.replace_more(limit=0)
+            i = 0
+            for comment in submission.comments.list():
+                self.ticker_search(comment)
+                # Limit search to top 30 comments per post
+                i = i + 1
+                if i > 30:
+                    break
+
+
+def main():
+    # Obnoxious title message
+    print(Fore.RED + INTRO_MSG)
+
+    # Read .env, setup PRAW, get arguments
+    parser, reddit = setup()
+
+    # Parse arguments
     options = parser.parse_args(sys.argv[1:])
     num_posts = options.numposts
     tickers = options.tickers
 
+    # Print options 
     print()
     print("Tickers:\t", tickers)
     print("#Posts: \t", num_posts)
     print()
 
-    # Search posts
-
-    posts = reddit.subreddit('wallstreetbets').hot(limit=(num_posts + 1))
-    posts = [post for post in posts]
-
-    # Skip daily discussion
-    posts = posts[1:]
-
-    for post in posts:
-        print(post.title)
-        print('[', post.url, ']')
-        print()
-        submission = reddit.submission(id=post.id)
-        submission.comment_sort = 'top'
-        submission.comments.replace_more(limit=0)
-        i = 0
-        for comment in submission.comments.list():
-            ticker_search(comment, tickers)
-            # Limit search to top 30 comments per post
-            i = i + 1
-            if i > 30:
-                break
+    # Begin scraping
+    scraper = WSBScraper(reddit, tickers, num_posts)
+    scraper.scrape()
 
 
 if __name__ == "__main__":
