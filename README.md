@@ -1,6 +1,6 @@
 # WSBScraper
 
-Search top r/wallstreetbets posts for specified tickers (or really any keyword) to keep up with the discussion!
+Search top r/wallstreetbets posts for specified tickers (or really any keyword) to keep up with the ~~retar...~~  discussion!
 
 ## Usage
 ```
@@ -26,4 +26,4 @@ echo 'ID=your_client_id_here' >> .env
 echo 'USER_AGENT=your_user_agent_here' >> .env
 ```
 
-You may need to set the correct path to your desired python3 interpreter in the shebang of [wsbscrper.py](wsbscrper.py) (or just run via ```python3 wsbscrper.py ...```).
+You may need to set the correct path to your desired python3 interpreter in the shebang of [wsbscper.py](wsbscper.py) (or just run via ```python3 wsbscper.py ...```).
