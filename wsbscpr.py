@@ -1,11 +1,10 @@
 import sys
 import os
 import argparse
-import json
 import praw
 from colorama import init
 from dotenv import load_dotenv
-from util import print_link, print_tickers, print_intro, print_options
+from util import print_intro, print_options, print_comment, print_post
 
 # Doom font
 INTRO_MSG = '''
@@ -57,24 +56,25 @@ class WSBScraper:
         self.num_posts = num_posts
 
 
+    # Search comment for tickers and print matches
     def ticker_search(self, comment):
-        print(comment.body)
-        print_tickers(self.tickers)
-        print_link(comment.permalink)
-        print()
+        matches = {x for x in self.tickers if x in comment.body}
+        if len(matches) != 0:
+            print_comment(comment, list(matches))
 
-
+    # Scrape top comments from hot posts and print ticker matches
     def scrape(self):
+        # Get top n posts
         posts = self.reddit.subreddit('wallstreetbets').hot(limit=(self.num_posts + 1))
         posts = [post for post in posts]
 
         # Skip daily discussion
         posts = posts[1:]
 
+        # Search each post for tickers in top comments
+        j = 1
         for post in posts:
-            print(post.title)
-            print_link(post.url)
-            print()
+            print_post(post, j)
             submission = self.reddit.submission(id=post.id)
             submission.comment_sort = 'top'
             submission.comments.replace_more(limit=0)
@@ -83,8 +83,10 @@ class WSBScraper:
                 self.ticker_search(comment)
                 # Limit search to top 30 comments per post
                 i = i + 1
-                if i > 3:
+                if i > 50:
                     break
+
+            j = j + 1
 
 
 def main():
