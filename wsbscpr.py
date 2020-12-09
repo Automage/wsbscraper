@@ -21,6 +21,10 @@ def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--numposts', type=int,
                         required=True, help='Number of posts to scan')
+
+    parser.add_argument('-d', '--depth', type=int,
+                        required=False, default=50, help='Number of comments to search per post')
+
     parser.add_argument('-t', '--tickers', nargs='+',
                         required=True, help='Tickers to look for')
 
@@ -50,10 +54,11 @@ def setup():
 
 
 class WSBScraper:
-    def __init__(self, reddit, tickers, num_posts):
+    def __init__(self, reddit, tickers, num_posts, depth):
         self.reddit = reddit
         self.tickers = tickers
         self.num_posts = num_posts
+        self.depth = depth
 
 
     # Search comment for tickers and print matches
@@ -83,7 +88,7 @@ class WSBScraper:
                 self.ticker_search(comment)
                 # Limit search to top 30 comments per post
                 i = i + 1
-                if i > 50:
+                if i > self.depth:
                     break
 
             j = j + 1
@@ -100,12 +105,13 @@ def main():
     options = parser.parse_args(sys.argv[1:])
     num_posts = options.numposts
     tickers = options.tickers
+    depth = options.depth
 
     # Print options 
     print_options(tickers, num_posts)
 
     # Begin scraping
-    scraper = WSBScraper(reddit, tickers, num_posts)
+    scraper = WSBScraper(reddit, tickers, num_posts, depth)
     scraper.scrape()
 
 
